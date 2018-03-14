@@ -3,6 +3,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -11,8 +12,8 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     private BorderPane layout = new BorderPane();
-    private TableView<Files> client = new TableView<>();
-    private TableView<Files> server = new TableView<>();
+    private ListView<String> client = new ListView<>();
+    private ListView<String> server = new ListView<>();
     private Button downloadBtn = new Button("Download");
     private Button uploadBtn = new Button("Upload");
     private GridPane editArea = new GridPane();
