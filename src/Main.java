@@ -11,18 +11,14 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     private BorderPane layout = new BorderPane();
-    private TableView<Files> client = new TableView<>();
-    private TableView<Files> server = new TableView<>();
+    private TableView<Client> client = new TableView<>();
+    private TableView<Server> server = new TableView<>();
     private Button downloadBtn = new Button("Download");
     private Button uploadBtn = new Button("Upload");
     private GridPane editArea = new GridPane();
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("File Sharer v1.0 Bro");
-        primaryStage.setScene(new Scene(layout, 500, 600));
-        primaryStage.show();
-
         editArea.add(downloadBtn, 0, 0);
         editArea.add(uploadBtn, 1, 0);
         downloadBtn.setOnAction(new EventHandler<ActionEvent>(){
@@ -42,10 +38,13 @@ public class Main extends Application {
         layout.setTop(editArea);
         layout.setLeft(client);
         layout.setRight(server);
+        primaryStage.setTitle("File Sharer v1.0 Bro");
+        primaryStage.setScene(new Scene(layout, 500, 600));
+        primaryStage.show();
     }
-
 
     public static void main(String[] args) {
         launch(args);
     }
+
 }
