@@ -1,39 +1,3 @@
-//import java.io.*;
-//import java.net.ServerSocket;
-//import java.net.Socket;
-//
-//public class Server {
-//
-//    public static void main(String args[]){
-//        try {
-//            ServerSocket serverSocket = new ServerSocket(8080);
-//            while (true) {
-//                Socket socket = serverSocket.accept();
-//                PrintWriter out = new PrintWriter(socket.getOutputStream());
-//
-//                InputStream inStream = socket.getInputStream();
-//                InputStreamReader reader = new InputStreamReader(inStream);
-//
-//                BufferedReader in = new BufferedReader(reader);
-//
-//                String line = null;
-//
-//                while ((line = in.readLine()) != null) {
-//
-//                }
-//
-//
-//                socket.close();
-//            }
-//        }catch(IOException e){
-//            e.printStackTrace();
-//
-//        }
-//    }
-//
-//}
-
-import javafx.stage.DirectoryChooser;
 
 import java.io.*;
 import java.net.*;
@@ -50,10 +14,8 @@ public class Server {
     protected String currentDir   = System.getProperty("user.dir");
     private LinkedList<File> files = new LinkedList<>();
 
-
-
     protected int numClients                = 0;
-    protected Vector messages               = new Vector();
+
 
     public static int SERVER_PORT = 8091;
     public static int MAX_CLIENTS = 5;
@@ -72,7 +34,7 @@ public class Server {
             while(true) {
                 clientSocket = serverSocket.accept();
                 System.out.println("Client #"+(numClients+1)+" connected.");
-                threads[numClients] = new ServerThread(clientSocket, messages);
+                threads[numClients] = new ServerThread(clientSocket);
 
                 threads[numClients].setCurrentFolder(files);
                 threads[numClients].start();

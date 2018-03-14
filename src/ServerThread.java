@@ -14,7 +14,7 @@ public class ServerThread extends Thread {
 
         protected LinkedList<File> currentFolder= null;
 
-        public ServerThread(Socket socket, Vector messages) {
+        public ServerThread(Socket socket) {
             super();
             this.socket = socket;
             this.messages = messages;
@@ -44,6 +44,7 @@ public class ServerThread extends Thread {
             }catch(IOException e){
                 e.printStackTrace();
             }
+
             try {
                 socket.close();
             } catch(IOException e) {
