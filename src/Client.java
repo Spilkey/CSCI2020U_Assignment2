@@ -195,6 +195,37 @@ public class Client extends Application {
             String msg = message.substring(index);
             System.out.println(msg);
         }
+        return errorMessage;
     }
+
+
+
+    public void listAllMessages() {
+        String message = null;
+
+        networkOut.println("LASTMSG");
+
+        // read response, store id
+        int id = -1;
+        try {
+            message = networkIn.readLine();
+        } catch (IOException e) {
+            System.err.println("Error reading from socket.");
+        }
+        String strID = message.substring(message.indexOf(':')+1);
+        id = (new Integer(strID.trim())).intValue();
+        for (int i = 0; i <= id; i++) {
+            networkOut.println("GETMSG "+i);
+            try {
+                message = networkIn.readLine();
+            } catch (IOException e) {
+                System.err.println("Error reading from socket.");
+            }
+            int index = message.indexOf(':')+1;
+            String msg = message.substring(index);
+            System.out.println(msg);
+        }
+    }
+
 
 }

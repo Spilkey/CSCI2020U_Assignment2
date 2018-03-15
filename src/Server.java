@@ -39,6 +39,7 @@ public class Server {
         } catch (IOException e) {
             System.err.println("IOEXception while creating server connection");
         }
+
     }
 
     public static void main(String[] args) {
