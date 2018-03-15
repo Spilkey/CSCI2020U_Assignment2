@@ -1,6 +1,7 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -24,6 +25,9 @@ public class Client extends Application {
 
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
+
+
+
     // holds the files
     private LinkedList<File> localFiles = null;
 
@@ -60,6 +64,7 @@ public class Client extends Application {
             System.err.println("IOEXception while opening a read/write connection");
         }
 
+
     }
 
 
@@ -91,21 +96,67 @@ public class Client extends Application {
         uploadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
             @Override
             public void handle(ActionEvent event){
-                networkOut.println("UPLOAD");
-                String downFile;
+
+                File upFile;
                 List<File> filesToAdd = new LinkedList<>();
 
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setTitle("Please select file(s) to upload, type ");
                 fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                filesToAdd = fileChooser.showOpenMultipleDialog(primaryStage);
+                upFile = fileChooser.showOpenDialog(primaryStage);
 
-                for(File x: filesToAdd){
-                networkOut.println(x);
+                networkOut.println("UPLOAD "+ upFile.getName());
+                DataOutputStream dos;
+
+                FileInputStream fis;
+                BufferedInputStream bis;
+                networkOut.println(upFile.length());
+
+
+
+                try {
+                    byte [] mybytearray  = new byte [(int)upFile.length()];
+                    fis = new FileInputStream(upFile);
+                    bis = new BufferedInputStream(fis);
+                    bis.read(mybytearray,0,mybytearray.length);
+
+                    dos = new DataOutputStream(socket.getOutputStream());
+                    System.out.println("Sending " + upFile + "(" + mybytearray.length + " bytes)");
+
+
+
+                    //Problem here
+                    dos.write(mybytearray,0,mybytearray.length);
+                    //Problem here
+
+
+
+                    dos.flush();
+                    System.out.println("Done.");
+
+                    while(networkIn.readLine() != null) {
+                        String s = networkIn.readLine();
+                        server.getItems().add(s);
+                    }
+
+                }catch(IOException e){
+                    e.printStackTrace();
+                    System.out.println("1 or more streams failed");
                 }
-            }
-        });
 
+
+            }
+
+        });
+       primaryStage.setOnCloseRequest(event ->  {
+           try {
+               socket.close();
+               System.out.println("Socket Closed");
+           }catch(IOException e){
+               e.printStackTrace();
+               System.out.println("Socket failed to close");
+           }
+        });
         layout.setTop(editArea);
         layout.setLeft(client);
         layout.setRight(server);
@@ -114,12 +165,6 @@ public class Client extends Application {
         while(networkIn.readLine() != null) {
             String s = networkIn.readLine();
             server.getItems().add(s);
-        }
-
-        try {
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
 

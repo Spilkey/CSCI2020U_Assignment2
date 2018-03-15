@@ -38,6 +38,7 @@ public class Server {
 
                 threads[numClients].setCurrentFolder(files);
                 threads[numClients].start();
+                this.setFiles(threads[numClients].getCurrentFolder());
                 numClients++;
 
             }
@@ -51,7 +52,7 @@ public class Server {
         Server app = new Server();
     }
 
-
-
-
+    public void setFiles(LinkedList<File> files) {
+        this.files = files;
+    }
 }
