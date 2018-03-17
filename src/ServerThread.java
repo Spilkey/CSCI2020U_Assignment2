@@ -7,9 +7,11 @@ import java.util.StringTokenizer;
 import java.util.Vector;
 
 public class ServerThread extends Thread {
-        protected Socket socket       = null;
-        protected PrintWriter out     = null;
-        protected BufferedReader in   = null;
+
+        protected Socket socket = null;
+        protected PrintWriter out = null;
+        protected BufferedReader in = null;
+        protected Vector messages = null;
 
 
         protected LinkedList<File> currentFolder= null;
@@ -41,6 +43,7 @@ public class ServerThread extends Thread {
                     }
 
 
+
                 } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
 
 
@@ -48,6 +51,7 @@ public class ServerThread extends Thread {
 
 
                     System.out.println("Arriving in the correct place?");
+
                     int bytesRead;
                     int current = 0;
                     FileOutputStream fos;
@@ -80,10 +84,10 @@ public class ServerThread extends Thread {
                         is.close();
                         fos.close();
                         bos.close();
-                        //updating folder which currently has all shared files
+                        // updating folder which currently has all shared files
                         currentFolder.add(currentFile);
 
-                        //sending folder names of files back to client for display
+                        // sending folder names of files back to client for display
                         for (File f : currentFolder) {
                             out.println(f.getName());
                         }
@@ -95,7 +99,9 @@ public class ServerThread extends Thread {
                     }
                 }
 
+
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
 
@@ -109,8 +115,6 @@ public class ServerThread extends Thread {
             }
         }
 
-
-
     public void setCurrentFolder(LinkedList<File> currentFolder) {
             this.currentFolder = currentFolder;
     }
@@ -118,6 +122,5 @@ public class ServerThread extends Thread {
     public LinkedList<File> getCurrentFolder() {
         return currentFolder;
     }
-
 
 }

@@ -6,30 +6,25 @@ import java.util.LinkedList;
 import java.util.Vector;
 
 public class Server {
-    protected Socket clientSocket           = null;
-    protected ServerSocket serverSocket     = null;
-    protected ServerThread[] threads        = null;
+    protected Socket clientSocket = null;
+    protected ServerSocket serverSocket = null;
+    protected ServerThread[] threads = null;
 
-
-    protected String currentDir   = System.getProperty("user.dir");
+    protected String currentDir = System.getProperty("user.dir");
     private LinkedList<File> files = new LinkedList<>();
 
-    protected int numClients                = 0;
-
+    protected int numClients = 0;
 
     public static int SERVER_PORT = 8091;
     public static int MAX_CLIENTS = 5;
 
     public Server() {
         try {
-
             File dir = new File(currentDir);
             files.addAll(Arrays.asList(dir.listFiles()));
 
             serverSocket = new ServerSocket(SERVER_PORT);
             threads = new ServerThread[MAX_CLIENTS];
-
-
 
             while(true) {
                 clientSocket = serverSocket.accept();
@@ -40,7 +35,6 @@ public class Server {
                 threads[numClients].start();
                 this.setFiles(threads[numClients].getCurrentFolder());
                 numClients++;
-
             }
         } catch (IOException e) {
             System.err.println("IOEXception while creating server connection");

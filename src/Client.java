@@ -19,26 +19,24 @@ import java.awt.*;
 import java.util.List;
 
 import static javafx.application.Application.launch;
+import static javax.swing.text.html.HTML.Tag.HEAD;
 
 public class Client extends Application {
+    // Socket and reader/writer
     private Socket socket = null;
-
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
 
     private File clientDir;
 
 
+
     // holds the files
     private LinkedList<File> localFiles = null;
-
-
     private BorderPane layout = new BorderPane();
-
-    //hold the file names for display
+    // hold the file names for display
     private ListView<String> client = new ListView<>();
     private ListView<String> server = new ListView<>();
-
 
     private javafx.scene.control.Button downloadBtn = new javafx.scene.control.Button("Download");
     private javafx.scene.control.Button uploadBtn = new Button("Upload");
@@ -48,6 +46,7 @@ public class Client extends Application {
     public  static int    SERVER_PORT = 8091;
 
     public Client() {
+
             }
 
 
@@ -60,6 +59,27 @@ public class Client extends Application {
         clientDir = directoryChooser.showDialog(primaryStage);
 
         addClientFiles();
+
+
+        try {
+            socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        } catch (UnknownHostException e) {
+            System.err.println("Unknown host: "+SERVER_ADDRESS);
+        } catch (IOException e) {
+            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
+        }
+        if (socket == null) {
+            System.err.println("socket is null");
+        }
+        try {
+            networkOut = new PrintWriter(socket.getOutputStream(), true);
+            networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            System.err.println("IOEXception while opening a read/write connection");
+        }
+
+
+
 
         primaryStage.setTitle("File Sharer v1.0 Bro");
         primaryStage.setScene(new Scene(layout, 500, 600));
@@ -78,15 +98,13 @@ public class Client extends Application {
                         downFile = networkIn.readLine();
                         client.getItems().add(downFile);
                     }
-
-                }catch(IOException e){
+                } catch(IOException e) {
                     e.printStackTrace();
                 }
-
             }
         });
-
         uploadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
+
             @Override
             public void handle(ActionEvent event){
 
@@ -135,8 +153,6 @@ public class Client extends Application {
                 // Sending the File length to the server
                 networkOut.println(upFile.length());
 
-
-
                 try {
                     // Reading in the file and writing the file
                     byte [] mybytearray  = new byte [(int)upFile.length()];
@@ -153,7 +169,12 @@ public class Client extends Application {
                     while ((count = in.read(mybytearray)) > 0) {
                         dos.write(mybytearray , 0, count);
                     }
-                    //cleaning the buffer
+
+                    //TODO Problem here
+                    dos.write(mybytearray,0,mybytearray.length);
+                    //Problem here
+
+
                     dos.flush();
                     System.out.println("Done.");
 
@@ -163,10 +184,11 @@ public class Client extends Application {
                         server.getItems().add(s);
                     }
 
-                }catch(IOException e){
+                } catch(IOException e) {
                     e.printStackTrace();
                     System.out.println("1 or more streams failed");
                 }
+
                 //closing the streams
                 try{
                     socket.close();
@@ -178,7 +200,6 @@ public class Client extends Application {
 
 
             }
-
         });
 
         layout.setTop(editArea);
@@ -214,6 +235,7 @@ public class Client extends Application {
             String s = networkIn.readLine();
             server.getItems().add(s);
         }
+
         try{
             socket.close();
         }catch (IOException e){
@@ -224,14 +246,13 @@ public class Client extends Application {
 
 
 
-    }
 
+    }
 
     public static void main(String[] args) {
         launch(args);
 
     }
-
 
     public void setLocalFiles(LinkedList<File> filesNames) {
         this.localFiles = filesNames;
@@ -250,35 +271,6 @@ public class Client extends Application {
             errorMessage = message.substring(code.length()+1, message.length());
         }
         return errorMessage;
-    }
-
-
-
-    public void listAllMessages() {
-        String message = null;
-
-        networkOut.println("LASTMSG");
-
-        // read response, store id
-        int id = -1;
-        try {
-            message = networkIn.readLine();
-        } catch (IOException e) {
-            System.err.println("Error reading from socket.");
-        }
-        String strID = message.substring(message.indexOf(':')+1);
-        id = (new Integer(strID.trim())).intValue();
-        for (int i = 0; i <= id; i++) {
-            networkOut.println("GETMSG "+i);
-            try {
-                message = networkIn.readLine();
-            } catch (IOException e) {
-                System.err.println("Error reading from socket.");
-            }
-            int index = message.indexOf(':')+1;
-            String msg = message.substring(index);
-            System.out.println(msg);
-        }
     }
 
     public void addClientFiles(){
