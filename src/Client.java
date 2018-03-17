@@ -26,6 +26,7 @@ public class Client extends Application {
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
 
+    private File clientDir;
 
 
     // holds the files
@@ -47,35 +48,27 @@ public class Client extends Application {
     public  static int    SERVER_PORT = 8091;
 
     public Client() {
-        try {
-            socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: "+SERVER_ADDRESS);
-        } catch (IOException e) {
-            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
-        }
-        if (socket == null) {
-            System.err.println("socket is null");
-        }
-        try {
-            networkOut = new PrintWriter(socket.getOutputStream(), true);
-            networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            System.err.println("IOEXception while opening a read/write connection");
-        }
-
-
-    }
+            }
 
 
     public void start(Stage primaryStage) throws Exception {
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setInitialDirectory(new File("."));
+
+        directoryChooser.setTitle("Open the directory for the client");
+        clientDir = directoryChooser.showDialog(primaryStage);
+
+        addClientFiles();
 
         primaryStage.setTitle("File Sharer v1.0 Bro");
         primaryStage.setScene(new Scene(layout, 500, 600));
         primaryStage.show();
 
+
         editArea.add(downloadBtn, 0, 0);
         editArea.add(uploadBtn, 1, 0);
+        //TODO COMPLETE DOWNLOAD BUTTON
         downloadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
             @Override
             public void handle(javafx.event.ActionEvent event){
@@ -98,23 +91,54 @@ public class Client extends Application {
             public void handle(ActionEvent event){
 
                 File upFile;
-                List<File> filesToAdd = new LinkedList<>();
+                /*
+                Checks for a user to have a File selected from
+                the view table upon clicking the download button
 
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Please select file(s) to upload, type ");
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                upFile = fileChooser.showOpenDialog(primaryStage);
+                if  not tells them to select from the table
+                */
+                try {
+                    upFile = new File(client.getSelectionModel().getSelectedItem());
+                }catch(NullPointerException e){
+                    System.out.println("You need to select a item for the table");
+                    e.printStackTrace();
+                    return;
+                }
 
+                //Socket, I/O Setup
+                try {
+                    socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+                } catch (UnknownHostException e) {
+                    System.err.println("Unknown host: "+SERVER_ADDRESS);
+                } catch (IOException e) {
+                    System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
+                }
+                if (socket == null) {
+                    System.err.println("socket is null");
+                }
+                try {
+                    networkOut = new PrintWriter(socket.getOutputStream(), true);
+                    networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                } catch (IOException e) {
+                    System.err.println("IOEXception while opening a read/write connection");
+                }
+
+
+                // Sending UPLOAD filename command to Server
                 networkOut.println("UPLOAD "+ upFile.getName());
-                DataOutputStream dos;
 
+                // Initializing Separate Streams for file reading/writing
+                DataOutputStream dos;
                 FileInputStream fis;
                 BufferedInputStream bis;
+
+                // Sending the File length to the server
                 networkOut.println(upFile.length());
 
 
 
                 try {
+                    // Reading in the file and writing the file
                     byte [] mybytearray  = new byte [(int)upFile.length()];
                     fis = new FileInputStream(upFile);
                     bis = new BufferedInputStream(fis);
@@ -124,16 +148,16 @@ public class Client extends Application {
                     System.out.println("Sending " + upFile + "(" + mybytearray.length + " bytes)");
 
 
-
-                    //Problem here
-                    dos.write(mybytearray,0,mybytearray.length);
-                    //Problem here
-
-
-
+                    DataInputStream in = new DataInputStream(new FileInputStream(upFile));
+                    int count;
+                    while ((count = in.read(mybytearray)) > 0) {
+                        dos.write(mybytearray , 0, count);
+                    }
+                    //cleaning the buffer
                     dos.flush();
                     System.out.println("Done.");
 
+                    //Reading output from the server to look add to the listveiw
                     while(networkIn.readLine() != null) {
                         String s = networkIn.readLine();
                         server.getItems().add(s);
@@ -143,29 +167,59 @@ public class Client extends Application {
                     e.printStackTrace();
                     System.out.println("1 or more streams failed");
                 }
+                //closing the streams
+                try{
+                    socket.close();
+                    networkOut.close();
+                    networkIn.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
 
 
             }
 
         });
-       primaryStage.setOnCloseRequest(event ->  {
-           try {
-               socket.close();
-               System.out.println("Socket Closed");
-           }catch(IOException e){
-               e.printStackTrace();
-               System.out.println("Socket failed to close");
-           }
-        });
+
         layout.setTop(editArea);
         layout.setLeft(client);
         layout.setRight(server);
 
+        /*
+        Below code calls the DIR Function which will grab the files from the server for display
+         */
+
+        //DIR
+        //*****************************
+
+
+        try {
+            socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
+        } catch (UnknownHostException e) {
+            System.err.println("Unknown host: "+SERVER_ADDRESS);
+        } catch (IOException e) {
+            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
+        }
+        if (socket == null) {
+            System.err.println("socket is null");
+        }
+        try {
+            networkOut = new PrintWriter(socket.getOutputStream(), true);
+            networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        } catch (IOException e) {
+            System.err.println("IOEXception while opening a read/write connection");
+        }
         networkOut.println("DIR");
         while(networkIn.readLine() != null) {
             String s = networkIn.readLine();
             server.getItems().add(s);
         }
+        try{
+            socket.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        //***************************
 
 
 
@@ -227,5 +281,16 @@ public class Client extends Application {
         }
     }
 
+    public void addClientFiles(){
 
+        if(!clientDir.isDirectory()){
+            System.out.println(clientDir+"is not a dirctory");
+        }else{
+            for (String x: clientDir.list()){
+                client.getItems().add(x);
+            }
+        }
+
+    }
 }
+

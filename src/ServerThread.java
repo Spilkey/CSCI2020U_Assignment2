@@ -10,14 +10,14 @@ public class ServerThread extends Thread {
         protected Socket socket       = null;
         protected PrintWriter out     = null;
         protected BufferedReader in   = null;
-        protected Vector messages     = null;
+
 
         protected LinkedList<File> currentFolder= null;
 
         public ServerThread(Socket socket) {
             super();
             this.socket = socket;
-            this.messages = messages;
+
             try {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -28,27 +28,33 @@ public class ServerThread extends Thread {
 
         public void run() {
             // initialize interaction
+
+            System.out.println("hello");
+
             try {
-                if (in.readLine().equalsIgnoreCase("DIR")) {
+                String line = in.readLine();
+                String[] words = line.split(" ");
+                System.out.println("lines is " +words.toString()+line);
+                if (words[0].equalsIgnoreCase("DIR")) {
                     for (File f : currentFolder) {
                         out.println(f.getName());
                     }
 
 
-                } else if (in.readLine().split(" ")[0].equalsIgnoreCase("DOWNLOAD")) {
+                } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
 
 
-                } else if (in.readLine().split(" ")[0].equalsIgnoreCase("UPLOAD")) {
+                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
 
 
-
+                    System.out.println("Arriving in the correct place?");
                     int bytesRead;
                     int current = 0;
                     FileOutputStream fos;
                     BufferedOutputStream bos;
 
                     try {
-                        String[] words = in.readLine().split(" ");
+
                         File currentFile = new File(words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
@@ -57,17 +63,18 @@ public class ServerThread extends Thread {
                         fos = new FileOutputStream(currentFile);
                         bos = new BufferedOutputStream(fos);
                         bytesRead = is.read(mybytearray, 0, mybytearray.length);
-
+                        System.out.println("arrived here");
                         current = bytesRead;
 
                         do {
-                            bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
-                            if(bytesRead >= 0) current += bytesRead;
-                        } while(bytesRead < -1);
+                            bytesRead = is.read(mybytearray, current, (mybytearray.length - current));
+                            if (bytesRead >= 0) current += bytesRead;
+                        } while (bytesRead < -1);
 
-                        bos.write(mybytearray, 0 , current);
+                        bos.write(mybytearray, 0, current);
+
                         bos.flush();
-                        System.out.println("File " + currentFile  + " Uploaded (" + current + " bytes read)");
+                        System.out.println("File " + currentFile + " Uploaded (" + current + " bytes read)");
                         System.out.println("Done.");
 
                         is.close();
@@ -82,19 +89,22 @@ public class ServerThread extends Thread {
                         }
 
 
-
-                    }catch(IOException e){
+                    } catch (IOException e) {
                         e.printStackTrace();
                         System.out.println("");
                     }
                 }
-            }catch(IOException e){
+
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
+            //*********************************************************
+            //TODO:: Open and close sockets per upload/download request
+            //*********************************************************
             try {
                 socket.close();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
