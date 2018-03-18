@@ -100,7 +100,7 @@ public class Client extends Application {
                 try {
                     upFile = new File(client.getSelectionModel().getSelectedItem());
                 }catch(NullPointerException e){
-                    System.out.println("You need to select a item for the table");
+                    System.out.println("You need to select an item for the table");
                     e.printStackTrace();
                     return;
                 }
@@ -111,7 +111,7 @@ public class Client extends Application {
                 } catch (UnknownHostException e) {
                     System.err.println("Unknown host: " + SERVER_ADDRESS);
                 } catch (IOException e) {
-                    System.err.println("IOEXception while connecting to server: " + SERVER_ADDRESS);
+                    System.err.println("IOException while connecting to server: " + SERVER_ADDRESS);
                 }
                 if (socket == null) {
                     System.err.println("socket is null");
@@ -120,7 +120,7 @@ public class Client extends Application {
                     networkOut = new PrintWriter(socket.getOutputStream(), true);
                     networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 } catch (IOException e) {
-                    System.err.println("IOEXception while opening a read/write connection");
+                    System.err.println("IOException while opening a read/write connection");
                 }
 
 
@@ -136,7 +136,7 @@ public class Client extends Application {
                 networkOut.println(upFile.length());
 
                 try {
-                    // Reading in the file and writing the file
+                    // Reading in the file and writing to the file
                     byte [] mybytearray  = new byte [(int)upFile.length()];
                     fis = new FileInputStream(upFile);
                     bis = new BufferedInputStream(fis);
