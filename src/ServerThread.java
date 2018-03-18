@@ -14,6 +14,7 @@ public class ServerThread extends Thread {
         protected Vector messages = null;
 
 
+        private File currentDir;
         protected LinkedList<File> currentFolder= null;
 
         public ServerThread(Socket socket) {
@@ -60,7 +61,7 @@ public class ServerThread extends Thread {
 
                     try {
 
-                        File currentFile = new File(words[1]);
+                        File currentFile = new File(currentDir.getPath(),words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
                         InputStream is = socket.getInputStream();
@@ -128,4 +129,7 @@ public class ServerThread extends Thread {
         return currentFolder;
     }
 
+    public void setCurrentDir(File currentDir) {
+        this.currentDir = currentDir;
+    }
 }

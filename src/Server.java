@@ -10,7 +10,7 @@ public class Server {
     protected ServerSocket serverSocket = null;
     protected ServerThread[] threads = null;
 
-    protected String currentDir = "ServerFiles";
+    protected File currentDir = new File("ServerFiles");
     private LinkedList<File> files = new LinkedList<>();
 
     protected int numClients = 0;
@@ -20,9 +20,9 @@ public class Server {
 
     public Server() {
         try {
-            File dir = new File(currentDir);
 
-            files.addAll(Arrays.asList(dir.listFiles()));
+
+            files.addAll(Arrays.asList(currentDir.listFiles()));
 
             serverSocket = new ServerSocket(SERVER_PORT);
             threads = new ServerThread[MAX_CLIENTS];
@@ -33,6 +33,7 @@ public class Server {
                 threads[numClients] = new ServerThread(clientSocket);
 
                 threads[numClients].setCurrentFolder(files);
+                threads[numClients].setCurrentDir(currentDir);
                 threads[numClients].start();
                 this.setFiles(threads[numClients].getCurrentFolder());
                 numClients++;

@@ -49,7 +49,6 @@ public class Client extends Application {
 
             }
 
-
     public void start(Stage primaryStage) throws Exception {
 
         DirectoryChooser directoryChooser = new DirectoryChooser();
@@ -59,12 +58,6 @@ public class Client extends Application {
         clientDir = directoryChooser.showDialog(primaryStage);
 
         addClientFiles();
-
-
-
-
-
-
 
         primaryStage.setTitle("File Sharer v1.0 Bro");
         primaryStage.setScene(new Scene(layout, 500, 600));
@@ -101,12 +94,13 @@ public class Client extends Application {
                 if  not tells them to select from the table
                 */
                 try {
-                    upFile = new File(client.getSelectionModel().getSelectedItem());
+                    upFile = new File(System.getProperty("user.dir") +"\\"+clientDir.getName()+"\\"+client.getSelectionModel().getSelectedItem());
                 }catch(NullPointerException e){
                     System.out.println("You need to select a item for the table");
                     e.printStackTrace();
                     return;
                 }
+
 
                 //Socket, I/O Setup
                 try {
@@ -137,7 +131,7 @@ public class Client extends Application {
 
                 // Sending the File length to the server
                 networkOut.println(upFile.length());
-
+                System.out.println(upFile.length());
                 try {
                     // Reading in the file and writing the file
                     byte [] mybytearray  = new byte [(int)upFile.length()];
@@ -154,11 +148,6 @@ public class Client extends Application {
                     while ((count = in.read(mybytearray)) > 0) {
                         dos.write(mybytearray , 0, count);
                     }
-
-                    //TODO Problem here
-
-                    //Problem here
-
 
                     dos.flush();
                     System.out.println("Done.");
