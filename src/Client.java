@@ -68,6 +68,7 @@ public class Client extends Application {
         primaryStage.setScene(new Scene(layout, 500, 600));
         primaryStage.show();
 
+
         editArea.add(downloadBtn, 0, 0);
         editArea.add(uploadBtn, 1, 0);
         //TODO COMPLETE DOWNLOAD BUTTON
