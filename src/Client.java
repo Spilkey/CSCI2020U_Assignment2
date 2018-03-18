@@ -61,22 +61,7 @@ public class Client extends Application {
         addClientFiles();
 
 
-        try {
-            socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-        } catch (UnknownHostException e) {
-            System.err.println("Unknown host: "+SERVER_ADDRESS);
-        } catch (IOException e) {
-            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
-        }
-        if (socket == null) {
-            System.err.println("socket is null");
-        }
-        try {
-            networkOut = new PrintWriter(socket.getOutputStream(), true);
-            networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        } catch (IOException e) {
-            System.err.println("IOEXception while opening a read/write connection");
-        }
+
 
 
 
@@ -171,31 +156,34 @@ public class Client extends Application {
                     }
 
                     //TODO Problem here
-                    dos.write(mybytearray,0,mybytearray.length);
+
                     //Problem here
 
 
                     dos.flush();
                     System.out.println("Done.");
 
+
+
+
+
+
+
                     //Reading output from the server to look add to the listveiw
-                    while(networkIn.readLine() != null) {
-                        String s = networkIn.readLine();
-                        server.getItems().add(s);
-                    }
+                    server.getItems().add(upFile.getName());
 
-                } catch(IOException e) {
-                    e.printStackTrace();
-                    System.out.println("1 or more streams failed");
-                }
-
-                //closing the streams
-                try{
-                    socket.close();
                     networkOut.close();
                     networkIn.close();
+
+                    dos.close();
+                    bis.close();
+                    fis.close();
+                    socket.close();
+
+
                 }catch(IOException e){
                     e.printStackTrace();
+                    System.out.println("1 or more streams failed");
                 }
 
 
@@ -231,9 +219,12 @@ public class Client extends Application {
             System.err.println("IOEXception while opening a read/write connection");
         }
         networkOut.println("DIR");
-        while(networkIn.readLine() != null) {
-            String s = networkIn.readLine();
+        String s = networkIn.readLine();
+        while(s != null) {
+
+            System.out.println(s);
             server.getItems().add(s);
+            s = networkIn.readLine();
         }
 
         try{
@@ -252,25 +243,6 @@ public class Client extends Application {
     public static void main(String[] args) {
         launch(args);
 
-    }
-
-    public void setLocalFiles(LinkedList<File> filesNames) {
-        this.localFiles = filesNames;
-    }
-    protected int getErrorCode(String message) {
-        StringTokenizer st = new StringTokenizer(message);
-        String code = st.nextToken();
-        return (new Integer(code)).intValue();
-    }
-
-    protected String getErrorMessage(String message) {
-        StringTokenizer st = new StringTokenizer(message);
-        String code = st.nextToken();
-        String errorMessage = null;
-        if (st.hasMoreTokens()) {
-            errorMessage = message.substring(code.length()+1, message.length());
-        }
-        return errorMessage;
     }
 
     public void addClientFiles(){

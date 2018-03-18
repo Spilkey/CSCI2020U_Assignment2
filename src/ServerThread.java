@@ -1,9 +1,9 @@
-import sun.plugin.javascript.navig4.Link;
+
 
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.StringTokenizer;
+
 import java.util.Vector;
 
 public class ServerThread extends Thread {
@@ -36,10 +36,11 @@ public class ServerThread extends Thread {
             try {
                 String line = in.readLine();
                 String[] words = line.split(" ");
-                System.out.println("lines is " +words.toString()+line);
+                System.out.println("lines is "+line);
                 if (words[0].equalsIgnoreCase("DIR")) {
                     for (File f : currentFolder) {
                         out.println(f.getName());
+
                     }
 
 
@@ -88,9 +89,11 @@ public class ServerThread extends Thread {
                         currentFolder.add(currentFile);
 
                         // sending folder names of files back to client for display
-                        for (File f : currentFolder) {
-                            out.println(f.getName());
-                        }
+
+
+                        System.out.println("current file is"+currentFile);
+
+
 
 
                     } catch (IOException e) {
@@ -116,7 +119,9 @@ public class ServerThread extends Thread {
         }
 
     public void setCurrentFolder(LinkedList<File> currentFolder) {
-            this.currentFolder = currentFolder;
+
+        this.currentFolder = currentFolder;
+
     }
 
     public LinkedList<File> getCurrentFolder() {

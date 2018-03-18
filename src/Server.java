@@ -10,17 +10,18 @@ public class Server {
     protected ServerSocket serverSocket = null;
     protected ServerThread[] threads = null;
 
-    protected String currentDir = System.getProperty("user.dir");
+    protected String currentDir = "ServerFiles";
     private LinkedList<File> files = new LinkedList<>();
 
     protected int numClients = 0;
 
     public static int SERVER_PORT = 8091;
-    public static int MAX_CLIENTS = 5;
+    public static int MAX_CLIENTS = 100;
 
     public Server() {
         try {
             File dir = new File(currentDir);
+
             files.addAll(Arrays.asList(dir.listFiles()));
 
             serverSocket = new ServerSocket(SERVER_PORT);
