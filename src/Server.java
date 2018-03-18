@@ -1,7 +1,9 @@
+
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Vector;
 
 public class Server {
     protected Socket clientSocket = null;
@@ -35,7 +37,7 @@ public class Server {
                 numClients++;
             }
         } catch (IOException e) {
-            System.err.println("IOException while creating server connection");
+            System.err.println("IOEXception while creating server connection");
         }
 
     }

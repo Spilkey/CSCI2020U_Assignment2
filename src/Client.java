@@ -1,17 +1,25 @@
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.event.Event;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.util.List;
+
+import static javafx.application.Application.launch;
+import static javax.swing.text.html.HTML.Tag.HEAD;
 
 public class Client extends Application {
     // Socket and reader/writer
@@ -21,6 +29,8 @@ public class Client extends Application {
 
     private File clientDir;
 
+
+
     // holds the files
     private LinkedList<File> localFiles = null;
     private BorderPane layout = new BorderPane();
@@ -28,14 +38,17 @@ public class Client extends Application {
     private ListView<String> client = new ListView<>();
     private ListView<String> server = new ListView<>();
 
-    private javafx.scene.control.Button downloadBtn = new Button("Download");
+    private javafx.scene.control.Button downloadBtn = new javafx.scene.control.Button("Download");
     private javafx.scene.control.Button uploadBtn = new Button("Upload");
     private GridPane editArea = new GridPane();
 
     public  static String SERVER_ADDRESS = "localhost";
     public  static int    SERVER_PORT = 8091;
 
-    public Client() {}
+    public Client() {
+
+            }
+
 
     public void start(Stage primaryStage) throws Exception {
 
@@ -47,12 +60,13 @@ public class Client extends Application {
 
         addClientFiles();
 
+
         try {
             socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
         } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + SERVER_ADDRESS);
+            System.err.println("Unknown host: "+SERVER_ADDRESS);
         } catch (IOException e) {
-            System.err.println("IOException while connecting to server: " + SERVER_ADDRESS);
+            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
         }
         if (socket == null) {
             System.err.println("socket is null");
@@ -61,8 +75,11 @@ public class Client extends Application {
             networkOut = new PrintWriter(socket.getOutputStream(), true);
             networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-            System.err.println("IOException while opening a read/write connection");
+            System.err.println("IOEXception while opening a read/write connection");
         }
+
+
+
 
         primaryStage.setTitle("File Sharer v1.0 Bro");
         primaryStage.setScene(new Scene(layout, 500, 600));
@@ -96,12 +113,12 @@ public class Client extends Application {
                 Checks for a user to have a File selected from
                 the view table upon clicking the download button
 
-                if not tells them to select from the table
+                if  not tells them to select from the table
                 */
                 try {
                     upFile = new File(client.getSelectionModel().getSelectedItem());
                 }catch(NullPointerException e){
-                    System.out.println("You need to select an item for the table");
+                    System.out.println("You need to select a item for the table");
                     e.printStackTrace();
                     return;
                 }
@@ -110,9 +127,9 @@ public class Client extends Application {
                 try {
                     socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
                 } catch (UnknownHostException e) {
-                    System.err.println("Unknown host: " + SERVER_ADDRESS);
+                    System.err.println("Unknown host: "+SERVER_ADDRESS);
                 } catch (IOException e) {
-                    System.err.println("IOException while connecting to server: " + SERVER_ADDRESS);
+                    System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
                 }
                 if (socket == null) {
                     System.err.println("socket is null");
@@ -121,7 +138,7 @@ public class Client extends Application {
                     networkOut = new PrintWriter(socket.getOutputStream(), true);
                     networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 } catch (IOException e) {
-                    System.err.println("IOException while opening a read/write connection");
+                    System.err.println("IOEXception while opening a read/write connection");
                 }
 
 
@@ -137,7 +154,7 @@ public class Client extends Application {
                 networkOut.println(upFile.length());
 
                 try {
-                    // Reading in the file and writing to the file
+                    // Reading in the file and writing the file
                     byte [] mybytearray  = new byte [(int)upFile.length()];
                     fis = new FileInputStream(upFile);
                     bis = new BufferedInputStream(fis);
@@ -153,7 +170,10 @@ public class Client extends Application {
                         dos.write(mybytearray , 0, count);
                     }
 
+                    //TODO Problem here
                     dos.write(mybytearray,0,mybytearray.length);
+                    //Problem here
+
 
                     dos.flush();
                     System.out.println("Done.");
@@ -186,23 +206,29 @@ public class Client extends Application {
         layout.setLeft(client);
         layout.setRight(server);
 
-        // Below code calls the DIR Function which will grab the files from the server for display
-        //***************************
+        /*
+        Below code calls the DIR Function which will grab the files from the server for display
+         */
+
+        //DIR
+        //*****************************
+
+
         try {
             socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
         } catch (UnknownHostException e) {
-            System.err.println("Unknown host: " + SERVER_ADDRESS);
+            System.err.println("Unknown host: "+SERVER_ADDRESS);
         } catch (IOException e) {
-            System.err.println("IOException while connecting to server: " + SERVER_ADDRESS);
+            System.err.println("IOEXception while connecting to server: "+SERVER_ADDRESS);
         }
         if (socket == null) {
-            System.err.println("Socket is null");
+            System.err.println("socket is null");
         }
         try {
             networkOut = new PrintWriter(socket.getOutputStream(), true);
             networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         } catch (IOException e) {
-            System.err.println("IOException while opening a read/write connection");
+            System.err.println("IOEXception while opening a read/write connection");
         }
         networkOut.println("DIR");
         while(networkIn.readLine() != null) {
@@ -216,16 +242,21 @@ public class Client extends Application {
             e.printStackTrace();
         }
         //***************************
+
+
+
+
+
     }
-    // End of UI Code
+
     public static void main(String[] args) {
         launch(args);
+
     }
 
     public void setLocalFiles(LinkedList<File> filesNames) {
         this.localFiles = filesNames;
     }
-
     protected int getErrorCode(String message) {
         StringTokenizer st = new StringTokenizer(message);
         String code = st.nextToken();
@@ -243,6 +274,7 @@ public class Client extends Application {
     }
 
     public void addClientFiles(){
+
         if(!clientDir.isDirectory()){
             System.out.println(clientDir+"is not a dirctory");
         }else{
@@ -253,3 +285,4 @@ public class Client extends Application {
 
     }
 }
+

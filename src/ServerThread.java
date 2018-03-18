@@ -1,3 +1,5 @@
+import sun.plugin.javascript.navig4.Link;
+
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
@@ -10,6 +12,8 @@ public class ServerThread extends Thread {
         protected PrintWriter out = null;
         protected BufferedReader in = null;
         protected Vector messages = null;
+
+
         protected LinkedList<File> currentFolder= null;
 
         public ServerThread(Socket socket) {
@@ -20,12 +24,13 @@ public class ServerThread extends Thread {
                 out = new PrintWriter(socket.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             } catch (IOException e) {
-                System.err.println("IOException while opening a read/write connection");
+                System.err.println("IOEXception while opening a read/write connection");
             }
         }
 
         public void run() {
             // initialize interaction
+
             System.out.println("hello");
 
             try {
@@ -37,9 +42,14 @@ public class ServerThread extends Thread {
                         out.println(f.getName());
                     }
 
+
+
                 } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
 
+
                 } else if (words[0].equalsIgnoreCase("UPLOAD")) {
+
+
                     System.out.println("Arriving in the correct place?");
 
                     int bytesRead;
@@ -48,6 +58,7 @@ public class ServerThread extends Thread {
                     BufferedOutputStream bos;
 
                     try {
+
                         File currentFile = new File(words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
@@ -81,13 +92,16 @@ public class ServerThread extends Thread {
                             out.println(f.getName());
                         }
 
+
                     } catch (IOException e) {
                         e.printStackTrace();
                         System.out.println("");
                     }
                 }
 
+
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
 
@@ -108,4 +122,5 @@ public class ServerThread extends Thread {
     public LinkedList<File> getCurrentFolder() {
         return currentFolder;
     }
+
 }
