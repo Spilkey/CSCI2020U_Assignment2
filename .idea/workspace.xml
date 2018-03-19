@@ -3,14 +3,12 @@
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/src/Server.java" line="49" />
     <bookmark url="file://$PROJECT_DIR$/src/ServerThread.java" line="48" />
-    <bookmark url="file://$PROJECT_DIR$/src/ServerThread.java" line="63" />
+    <bookmark url="file://$PROJECT_DIR$/src/ServerThread.java" line="60" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a1ea3463-88fc-411e-9cf7-f0fac550f902" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/assignment2/Server.class" afterPath="$PROJECT_DIR$/out/production/assignment2/Server.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/assignment2/ServerThread.class" afterPath="$PROJECT_DIR$/out/production/assignment2/ServerThread.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Server.java" afterPath="$PROJECT_DIR$/src/Server.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Client.java" afterPath="$PROJECT_DIR$/src/Client.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/ServerThread.java" afterPath="$PROJECT_DIR$/src/ServerThread.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -26,8 +24,8 @@
       <file leaf-file-name="Client.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Client.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="219">
-              <caret line="153" column="0" lean-forward="false" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
+            <state relative-caret-position="375">
+              <caret line="124" column="44" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="44" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="class#2160:2660" expanded="false" />
@@ -39,8 +37,8 @@
       <file leaf-file-name="ServerThread.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/ServerThread.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+            <state relative-caret-position="340">
+              <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -89,9 +87,9 @@
         <option value="$PROJECT_DIR$/ClientFiles/hii.txt" />
         <option value="$PROJECT_DIR$/ServerFiles/hello.txt" />
         <option value="$PROJECT_DIR$/ServerFiles/HIbob.txt" />
-        <option value="$PROJECT_DIR$/src/Client.java" />
         <option value="$PROJECT_DIR$/src/Server.java" />
         <option value="$PROJECT_DIR$/src/ServerThread.java" />
+        <option value="$PROJECT_DIR$/src/Client.java" />
       </list>
     </option>
   </component>
@@ -326,12 +324,12 @@
       <workItem from="1520983328840" duration="22717000" />
       <workItem from="1521061981900" duration="14765000" />
       <workItem from="1521210992019" duration="29196000" />
-      <workItem from="1521408450259" duration="14510000" />
+      <workItem from="1521408450259" duration="16635000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82833000" />
+    <option name="totallyTimeSpent" value="84958000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1376" height="784" extended-state="6" />
@@ -345,11 +343,11 @@
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32980332" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10509554" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10509554" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32961783" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30547112" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.30547112" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -576,17 +574,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Client.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="153" column="0" lean-forward="false" selection-start-line="153" selection-start-column="0" selection-end-line="153" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="class#2160:2660" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ServerFiles/HIbob.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -600,8 +587,8 @@
         <state relative-caret-position="184">
           <caret line="991" column="16" lean-forward="false" selection-start-line="991" selection-start-column="16" selection-end-line="991" selection-end-column="16" />
           <folding>
-            <element signature="e#38621#38622#0" expanded="true" />
-            <element signature="e#38666#38667#0" expanded="true" />
+            <element signature="e#38621#38622#0" expanded="false" />
+            <element signature="e#38666#38667#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -640,10 +627,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Client.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="124" column="44" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="class#2160:2660" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/ServerThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
+        <state relative-caret-position="340">
+          <caret line="52" column="0" lean-forward="false" selection-start-line="52" selection-start-column="0" selection-end-line="52" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

@@ -152,6 +152,7 @@ public class Client extends Application {
 
                     dos.flush();
 
+
                     System.out.println("Done.");
 
                     //Reading output from the server to look add to the listveiw

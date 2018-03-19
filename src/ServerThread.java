@@ -51,9 +51,6 @@ public class ServerThread extends Thread {
 
                 } else if (words[0].equalsIgnoreCase("UPLOAD")) {
 
-
-
-
                     int bytesRead;
 
                     FileOutputStream fos;
