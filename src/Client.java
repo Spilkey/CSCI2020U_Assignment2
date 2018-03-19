@@ -149,14 +149,10 @@ public class Client extends Application {
                         dos.write(mybytearray , 0, count);
                     }
 
+
                     dos.flush();
+
                     System.out.println("Done.");
-
-
-
-
-
-
 
                     //Reading output from the server to look add to the listveiw
                     server.getItems().add(upFile.getName());
@@ -167,6 +163,7 @@ public class Client extends Application {
                     dos.close();
                     bis.close();
                     fis.close();
+                    in.close();
                     socket.close();
 
 

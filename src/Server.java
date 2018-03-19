@@ -1,4 +1,6 @@
 
+import sun.plugin.javascript.navig4.Link;
+
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
@@ -25,17 +27,24 @@ public class Server {
             files.addAll(Arrays.asList(currentDir.listFiles()));
 
             serverSocket = new ServerSocket(SERVER_PORT);
-            threads = new ServerThread[MAX_CLIENTS];
+            LinkedList<ServerThread> threads = new LinkedList<>();
 
             while(true) {
                 clientSocket = serverSocket.accept();
                 System.out.println("Client #"+(numClients+1)+" connected.");
-                threads[numClients] = new ServerThread(clientSocket);
 
-                threads[numClients].setCurrentFolder(files);
-                threads[numClients].setCurrentDir(currentDir);
-                threads[numClients].start();
-                this.setFiles(threads[numClients].getCurrentFolder());
+                ServerThread currentThread = new ServerThread(clientSocket);
+                threads.add(currentThread);
+                int index = threads.indexOf(currentThread);
+
+                threads.get(index).setCurrentFolder(files);
+                threads.get(index).setCurrentDir(currentDir);
+                threads.get(index).start();
+                this.setFiles(threads.get(index).getCurrentFolder());
+                threads.remove(threads.get(index));
+
+
+
                 numClients++;
             }
         } catch (IOException e) {

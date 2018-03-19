@@ -39,12 +39,12 @@ public class ServerThread extends Thread {
                 String[] words = line.split(" ");
                 System.out.println("lines is "+line);
                 if (words[0].equalsIgnoreCase("DIR")) {
+
                     for (File f : currentFolder) {
                         out.println(f.getName());
-
                     }
-
-
+                    out.close();
+                    in.close();
 
                 } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
 
@@ -52,10 +52,10 @@ public class ServerThread extends Thread {
                 } else if (words[0].equalsIgnoreCase("UPLOAD")) {
 
 
-                    System.out.println("Arriving in the correct place?");
+
 
                     int bytesRead;
-                    int current = 0;
+
                     FileOutputStream fos;
                     BufferedOutputStream bos;
 
@@ -66,26 +66,30 @@ public class ServerThread extends Thread {
 
                         InputStream is = socket.getInputStream();
                         byte[] mybytearray = new byte[fileLength];
+
                         fos = new FileOutputStream(currentFile);
                         bos = new BufferedOutputStream(fos);
-                        bytesRead = is.read(mybytearray, 0, mybytearray.length);
-                        System.out.println("arrived here");
-                        current = bytesRead;
 
-                        do {
-                            bytesRead = is.read(mybytearray, current, (mybytearray.length - current));
-                            if (bytesRead >= 0) current += bytesRead;
-                        } while (bytesRead < -1);
+                        //does not read 2nd file when uploading
+                        bytesRead = is.read(mybytearray);
 
-                        bos.write(mybytearray, 0, current);
+
+                        System.out.println("bytes read is "+bytesRead);
+
+                        bos.write(mybytearray);
 
                         bos.flush();
-                        System.out.println("File " + currentFile + " Uploaded (" + current + " bytes read)");
+                        fos.flush();
+
+                        System.out.println("File " + currentFile + " Uploaded (" + bytesRead + " bytes read)");
                         System.out.println("Done.");
 
                         is.close();
                         fos.close();
                         bos.close();
+                        in.close();
+                        out.close();
+
                         // updating folder which currently has all shared files
                         currentFolder.add(currentFile);
 
@@ -93,6 +97,7 @@ public class ServerThread extends Thread {
 
 
                         System.out.println("current file is"+currentFile);
+                        System.out.println(" ");
 
 
 
