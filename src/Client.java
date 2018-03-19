@@ -87,6 +87,7 @@ public class Client extends Application {
                     return;
                 }
 
+
                 //Socket, I/O Setup
                 try {
                     socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
@@ -205,4 +206,3 @@ public class Client extends Application {
         }
     }
 }
-

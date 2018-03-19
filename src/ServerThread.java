@@ -28,6 +28,7 @@ public class ServerThread extends Thread {
                 String line = in.readLine();
                 String[] words = line.split(",");
                 if (words[0].equalsIgnoreCase("DIR")) {
+
                     for (File f : currentFolder) {
                         out.println(f.getName());
                     }
