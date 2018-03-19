@@ -1,6 +1,4 @@
 
-import sun.plugin.javascript.navig4.Link;
-
 import java.io.*;
 import java.net.*;
 import java.util.Arrays;
@@ -22,7 +20,6 @@ public class Server {
 
     public Server() {
         try {
-
 
             files.addAll(Arrays.asList(currentDir.listFiles()));
 

@@ -10,7 +10,7 @@ public class ServerThread extends Thread {
 
         protected Socket socket = null;
         protected PrintWriter out = null;
-        protected BufferedReader in = null;
+        protected DataInputStream in = null;
         protected Vector messages = null;
 
 
@@ -23,7 +23,7 @@ public class ServerThread extends Thread {
 
             try {
                 out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             } catch (IOException e) {
                 System.err.println("IOEXception while opening a read/write connection");
             }
@@ -64,30 +64,34 @@ public class ServerThread extends Thread {
                         File currentFile = new File(currentDir.getPath(),words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
-                        InputStream is = socket.getInputStream();
-                        byte[] mybytearray = new byte[fileLength];
+
+
+
 
                         fos = new FileOutputStream(currentFile);
                         bos = new BufferedOutputStream(fos);
 
                         //does not read 2nd file when uploading
-                        bytesRead = is.read(mybytearray);
+                        byte[] bytes = new byte[fileLength];
+                        int i = 0;
 
+                        while(in.available() != 0 && i < fileLength){
+                            bytes[i] = in.readByte();
+                            i ++;
+                        }
 
-                        System.out.println("bytes read is "+bytesRead);
-
-                        bos.write(mybytearray);
+                        bos.write(bytes);
 
                         bos.flush();
                         fos.flush();
 
-                        System.out.println("File " + currentFile + " Uploaded (" + bytesRead + " bytes read)");
+                       // System.out.println("File " + currentFile + " Uploaded (" + bytesRead + " bytes read)");
                         System.out.println("Done.");
 
-                        is.close();
+                        in.close();
                         fos.close();
                         bos.close();
-                        in.close();
+
                         out.close();
 
                         // updating folder which currently has all shared files
