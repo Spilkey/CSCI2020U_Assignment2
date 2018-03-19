@@ -1,20 +1,14 @@
-import sun.plugin.javascript.navig4.Link;
-
 import java.io.*;
 import java.net.Socket;
 import java.util.LinkedList;
-import java.util.StringTokenizer;
-import java.util.Vector;
 
 public class ServerThread extends Thread {
-
         protected Socket socket = null;
         protected PrintWriter out = null;
-        protected BufferedReader in = null;
-        protected Vector messages = null;
+        protected DataInputStream in = null;
 
-
-        protected LinkedList<File> currentFolder= null;
+        private File currentDir;
+        protected LinkedList<File> currentFolder = null;
 
         public ServerThread(Socket socket) {
             super();
@@ -22,92 +16,69 @@ public class ServerThread extends Thread {
 
             try {
                 out = new PrintWriter(socket.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
             } catch (IOException e) {
-                System.err.println("IOEXception while opening a read/write connection");
+                System.err.println("IOException while opening a read/write connection");
             }
         }
 
         public void run() {
             // initialize interaction
-
-            System.out.println("hello");
-
             try {
                 String line = in.readLine();
-                String[] words = line.split(" ");
-                System.out.println("lines is " +words.toString()+line);
+                String[] words = line.split(",");
                 if (words[0].equalsIgnoreCase("DIR")) {
                     for (File f : currentFolder) {
                         out.println(f.getName());
                     }
+                    out.close();
+                    in.close();
 
-
-
-                } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
-
-
-                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
-
-
-                    System.out.println("Arriving in the correct place?");
-
-                    int bytesRead;
-                    int current = 0;
+                } else if (words[0].equalsIgnoreCase("UPLOAD")
+                        || words[0].equalsIgnoreCase("DOWNLOAD")) {
                     FileOutputStream fos;
                     BufferedOutputStream bos;
 
                     try {
-
-                        File currentFile = new File(words[1]);
+                        File currentFile = new File(currentDir.getPath(), words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
-                        InputStream is = socket.getInputStream();
-                        byte[] mybytearray = new byte[fileLength];
                         fos = new FileOutputStream(currentFile);
                         bos = new BufferedOutputStream(fos);
-                        bytesRead = is.read(mybytearray, 0, mybytearray.length);
-                        System.out.println("arrived here");
-                        current = bytesRead;
 
-                        do {
-                            bytesRead = is.read(mybytearray, current, (mybytearray.length - current));
-                            if (bytesRead >= 0) current += bytesRead;
-                        } while (bytesRead < -1);
+                        byte[] byteArr = new byte[fileLength];
+                        int i = 0;
 
-                        bos.write(mybytearray, 0, current);
+                        while(in.available() != 0 && i < fileLength) {
+                            byteArr[i] = in.readByte();
+                            i++;
+                        }
+
+                        bos.write(byteArr);
 
                         bos.flush();
-                        System.out.println("File " + currentFile + " Uploaded (" + current + " bytes read)");
-                        System.out.println("Done.");
+                        fos.flush();
 
-                        is.close();
+                        in.close();
+                        out.close();
                         fos.close();
                         bos.close();
+
                         // updating folder which currently has all shared files
                         currentFolder.add(currentFile);
 
                         // sending folder names of files back to client for display
-                        for (File f : currentFolder) {
-                            out.println(f.getName());
-                        }
-
+                        System.out.println("current file is " + currentFile);
 
                     } catch (IOException e) {
                         e.printStackTrace();
-                        System.out.println("");
                     }
                 }
 
-
             } catch (IOException e) {
-
                 e.printStackTrace();
             }
 
-            //*********************************************************
-            //TODO:: Open and close sockets per upload/download request
-            //*********************************************************
             try {
                 socket.close();
             } catch (IOException e) {
@@ -115,12 +86,9 @@ public class ServerThread extends Thread {
             }
         }
 
-    public void setCurrentFolder(LinkedList<File> currentFolder) {
-            this.currentFolder = currentFolder;
-    }
+    public LinkedList<File> getCurrentFolder() { return currentFolder; }
 
-    public LinkedList<File> getCurrentFolder() {
-        return currentFolder;
-    }
+    public void setCurrentFolder(LinkedList<File> currentFolder) { this.currentFolder = currentFolder; }
 
+    public void setCurrentDir(File currentDir) { this.currentDir = currentDir; }
 }
