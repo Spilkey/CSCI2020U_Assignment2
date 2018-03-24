@@ -35,8 +35,9 @@ public class ServerThread extends Thread {
                     out.close();
                     in.close();
 
-                } else if (words[0].equalsIgnoreCase("UPLOAD")
-                        || words[0].equalsIgnoreCase("DOWNLOAD")) {
+                } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
+                // TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
                     FileOutputStream fos;
                     BufferedOutputStream bos;
 

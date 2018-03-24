@@ -1,5 +1,3 @@
-//TODO: User directory is supposed be a command line argument
-
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,7 +6,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -20,6 +17,7 @@ public class Client extends Application {
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
 
+    private static String[] arguments; // Global args variable to use in overridden main
     private File clientDir;
     private File serverDir;
 
@@ -37,12 +35,13 @@ public class Client extends Application {
     public static int    SERVER_PORT = 8091;
 
     public void start(Stage primaryStage) throws Exception {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setInitialDirectory(new File("."));
+        if (arguments.length < 2) {
+            System.err.println("Usage: java Client <ClientDirectory> <ComputerName(Server Directory)>");
+            System.exit(0);
+        }
 
-        directoryChooser.setTitle("Open the directory for the client");
-        clientDir = directoryChooser.showDialog(primaryStage);
-        serverDir = new File("ServerFiles");
+        clientDir = new File(arguments[0]); // ClientFiles folder
+        serverDir = new File(arguments[1]); // ServerFiles folder
 
         addClientFiles();
 
@@ -194,7 +193,10 @@ public class Client extends Application {
         // *****************************
     }
 
-    public static void main(String[] args) { launch(args); }
+    public static void main(String[] args) {
+        arguments = args;
+        launch(args);
+    }
 
     public void addClientFiles(){
         if(!clientDir.isDirectory()){
