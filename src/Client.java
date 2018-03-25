@@ -82,7 +82,8 @@ public class Client extends Application {
                     System.err.println("IOException while opening a read/write connection");
                 }
                 try {
-                    networkOut.println(sendFile);
+                    networkOut.println();
+
                     int sizeOfNewFile = Integer.parseInt(networkIn.readLine());
                     File newFile = new File(System.getProperty("user.dir")+"\\"+
                                                 clientDir.getName()+"\\"+sendFile);

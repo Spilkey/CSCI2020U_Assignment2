@@ -25,6 +25,7 @@ public class ServerThread extends Thread {
         public void run() {
             // initialize interaction
             try {
+
                 String line = in.readLine();
                 String[] words = line.split(",");
                 if (words[0].equalsIgnoreCase("DIR")) {
