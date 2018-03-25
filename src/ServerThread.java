@@ -36,17 +36,12 @@ public class ServerThread extends Thread {
                     in.close();
 
                 } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
-                // TODO:::::::::::::::::::::::::::::::::::::::::::::::::::::::
-                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
-                    FileOutputStream fos;
                     BufferedOutputStream bos;
-
                     try {
                         File currentFile = new File(currentDir.getPath(), words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
-                        fos = new FileOutputStream(currentFile);
-                        bos = new BufferedOutputStream(fos);
+                        bos = new BufferedOutputStream(new FileOutputStream(currentFile));
 
                         byte[] byteArr = new byte[fileLength];
                         int i = 0;
@@ -57,13 +52,43 @@ public class ServerThread extends Thread {
                         }
 
                         bos.write(byteArr);
-
                         bos.flush();
-                        fos.flush();
 
                         in.close();
                         out.close();
-                        fos.close();
+                        bos.close();
+
+                        // updating folder which currently has all shared files
+                        currentFolder.add(currentFile);
+
+                        // sending folder names of files back to client for display
+                        System.out.println("current file is " + currentFile);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
+                    BufferedOutputStream bos;
+                    try {
+                        File currentFile = new File(currentDir.getPath(), words[1]);
+                        int fileLength = Integer.parseInt(in.readLine());
+
+                        bos = new BufferedOutputStream(new FileOutputStream(currentFile));
+
+                        byte[] byteArr = new byte[fileLength];
+                        int i = 0;
+
+                        while(in.available() != 0 && i < fileLength) {
+                            byteArr[i] = in.readByte();
+                            i++;
+                        }
+
+                        bos.write(byteArr);
+                        bos.flush();
+
+                        in.close();
+                        out.close();
                         bos.close();
 
                         // updating folder which currently has all shared files
