@@ -36,38 +36,7 @@ public class ServerThread extends Thread {
                     in.close();
 
                 } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
-                    BufferedOutputStream bos;
-                    try {
-                        File currentFile = new File(currentDir.getPath(), words[1]);
-                        int fileLength = Integer.parseInt(in.readLine());
-
-                        bos = new BufferedOutputStream(new FileOutputStream(currentFile));
-
-                        byte[] byteArr = new byte[fileLength];
-                        int i = 0;
-
-                        while(in.available() != 0 && i < fileLength) {
-                            byteArr[i] = in.readByte();
-                            i++;
-                        }
-
-                        bos.write(byteArr);
-                        bos.flush();
-
-                        in.close();
-                        out.close();
-                        bos.close();
-
-                        // updating folder which currently has all shared files
-                        currentFolder.add(currentFile);
-
-                        // sending folder names of files back to client for display
-                        System.out.println("current file is " + currentFile);
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
+                    // TODO no idea what to put in here.
                 } else if (words[0].equalsIgnoreCase("UPLOAD")) {
                     BufferedOutputStream bos;
                     try {

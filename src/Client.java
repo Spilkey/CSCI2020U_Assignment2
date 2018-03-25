@@ -83,55 +83,38 @@ public class Client extends Application {
                 try {
                     networkOut.println("DOWNLOAD," + sendFile);
 
-                    int sizeOfNewFile = Integer.parseInt(networkIn.readLine());
+                    // Initializing separate streams for file reading/writing
+                    DataInputStream dis = new DataInputStream(socket.getInputStream());
+                    BufferedReader br = new BufferedReader(new InputStreamReader(dis));
+
                     File newFile = new File(System.getProperty("user.dir") + "\\" +
                             serverDir.getName() + "\\" + sendFile);
+                    int sizeOfNewFile = Integer.parseInt(networkIn.readLine());
 
-                    // Initializing separate streams for file reading/writing
-                    DataOutputStream dos;
-                    FileInputStream fis;
-                    BufferedInputStream bis;
+                    FileWriter fileOutput = new FileWriter(newFile.getAbsoluteFile());
+                    BufferedWriter outFile = new BufferedWriter(fileOutput);
 
-                    // Sending the File length to client
-                    networkOut.println(sizeOfNewFile);
+                    // Reading in the file and writing the file
+                    byte[] byteArr  = new byte [(int)newFile.length()];
 
-                    try {
-                        // Reading in the file and writing the file
-                        byte[] byteArr = new byte[sizeOfNewFile];
-                        fis = new FileInputStream(sendFile);
-                        bis = new BufferedInputStream(fis);
-                        bis.read(byteArr, 0, byteArr.length);
+                    //TODO :: Using the streams somehow here?
 
-                        dos = new DataOutputStream(socket.getOutputStream());
-                        System.out.println("Sending " + sendFile + "(" + byteArr.length + " bytes)");
+                    // Reading output from the server to add to the ListView
+                    server.getItems().add(newFile.getName());
 
-                        DataInputStream in = new DataInputStream(new FileInputStream(newFile));
-                        int count;
-                        while ((count = in.read(byteArr)) > 0) {
-                            dos.write(byteArr, 0, count);
-                        }
+                    networkIn.close();
+                    networkOut.close();
 
-                        dos.flush();
-
-                        // Reading output from the client to add to the ListView
-                        client.getItems().add(sendFile);
-
-                        networkOut.close();
-                        networkIn.close();
-                        dos.close();
-                        bis.close();
-                        fis.close();
-                        in.close();
-                        socket.close();
-
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        System.out.println("1 or more streams failed");
-                    }
+                    dis.close();
+                    br.close();
+                    outFile.flush();
+                    outFile.close();
+                    socket.close();
 
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
             }
         });
         uploadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
