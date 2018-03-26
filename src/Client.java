@@ -16,6 +16,7 @@ public class Client extends Application {
     private Socket socket = null;
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
+    private DataInputStream in = null;
 
     private static String[] arguments; // Global args variable to use in overridden main
     private File clientDir;
@@ -44,14 +45,13 @@ public class Client extends Application {
         serverDir = new File(arguments[1]); // ServerFiles folder
 
         addClientFiles();
-
         primaryStage.setTitle("File Sharer v1.0!");
         primaryStage.setScene(new Scene(layout, 500, 600));
         primaryStage.show();
 
         editArea.add(downloadBtn, 0, 0);
         editArea.add(uploadBtn, 1, 0);
-        // TODO COMPLETE DOWNLOAD BUTTON
+
         downloadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){
             @Override
             public void handle(javafx.event.ActionEvent event){
@@ -59,7 +59,7 @@ public class Client extends Application {
                 try {
                     sendFile = server.getSelectionModel().getSelectedItem();
                 }catch(NullPointerException e){
-                    System.out.println("You must selsct a file to download");
+                    System.out.println("You must select a file to download");
                     return;
                 }
                 //Socket setup
@@ -77,18 +77,56 @@ public class Client extends Application {
                 }
                 try {
                     networkOut = new PrintWriter(socket.getOutputStream(), true);
-                    networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                } catch (IOException e) {
-                    System.err.println("IOException while opening a read/write connection");
-                }
-                try {
-                    networkOut.println();
-
-                    int sizeOfNewFile = Integer.parseInt(networkIn.readLine());
-                    File newFile = new File(System.getProperty("user.dir")+"\\"+
-                                                clientDir.getName()+"\\"+sendFile);
-
+                    in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 }catch(IOException e){
+                    e.printStackTrace();
+                }
+                try{
+
+                    networkOut.println("DOWNLOAD," + sendFile);
+                    String x = in.readLine();
+                    System.out.println(x);
+                    int fileLength = Integer.parseInt(x);
+
+                    //geting making file for new file
+                    File newFile = new File(System.getProperty("user.dir") + "\\" +
+                            clientDir.getName() + "\\" + sendFile);
+
+                    // Initializing separate streams for file reading/writing
+
+                    BufferedOutputStream bos;
+
+                    bos = new BufferedOutputStream(new FileOutputStream(newFile));
+
+                    byte[] byteArr = new byte[fileLength];
+                    int i = 0;
+                    System.out.println("In availible "+ in.available());
+                    while(in.available() != 0 && i < fileLength) {
+                        byteArr[i] = in.readByte();
+                        i++;
+                        System.out.println("reading");
+                    }
+
+                    bos.write(byteArr);
+
+                    bos.flush();
+
+
+                    // updating folder which currently has all shared files
+                    client.getItems().add(newFile.getName());
+
+                    // sending folder names of files back to client for display
+                    System.out.println("current file is " + newFile);
+
+
+                    // Sending the File length to client
+
+
+                    in.close();
+                    bos.close();
+                    socket.close();
+
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -107,7 +145,7 @@ public class Client extends Application {
                 }
 
 
-                //Socket, I/O Setup
+                // Socket, I/O Setup
                 try {
                     socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
                 } catch (UnknownHostException e) {
@@ -153,7 +191,7 @@ public class Client extends Application {
 
                     dos.flush();
 
-                    //Reading output from the server to add to the ListView
+                    // Reading output from the server to add to the ListView
                     server.getItems().add(upFile.getName());
 
                     networkOut.close();

@@ -26,9 +26,16 @@ public class ServerThread extends Thread {
             // initialize interaction
             try {
 
+                in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 String line = in.readLine();
                 String[] words = line.split(",");
                 if (words[0].equalsIgnoreCase("DIR")) {
+                    try {
+                        out = new PrintWriter(socket.getOutputStream(), true);
+
+                    } catch (IOException e) {
+                        System.err.println("IOException while opening a read/write connection");
+                    }
 
                     for (File f : currentFolder) {
                         out.println(f.getName());
@@ -37,16 +44,63 @@ public class ServerThread extends Thread {
                     in.close();
                 }else if( words[0].equalsIgnoreCase("DOWNLOAD")){
 
+                    DataOutputStream dos;
+                    FileInputStream fis;
+                    BufferedInputStream bis;
+
+                    // Sending the File length to the server
+
+                    try {
+                        dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
+                        File reqFile = new File(currentDir+"\\"+words[1]);
+                        dos.writeBytes(String.valueOf(reqFile.length())+'\n');
+
+
+                        // Reading in the file and writing the file
+                        byte[] byteArr  = new byte [(int)reqFile.length()];
+                        fis = new FileInputStream(reqFile);
+                        bis = new BufferedInputStream(fis);
+                        int bytesread = bis.read(byteArr,0,byteArr.length);
+
+
+                        System.out.println("Reading " + reqFile + "(" + byteArr.length + " bytes)");
+                        System.out.println("Read "+ bytesread);
+                        DataInputStream ins = new DataInputStream(new FileInputStream(reqFile));
+                        int count;
+                        while ((count = ins.read(byteArr)) > 0) {
+                            System.out.println(count);
+                            dos.write(byteArr , 0, count);
+                            System.out.println("writing");
+                        }
+
+                        dos.flush();
+
+                        // Reading output from the server to add to the ListView
+
+                        dos.close();
+                        bis.close();
+                        fis.close();
+                        ins.close();
+                        in.close();
+
+                        socket.close();
+
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                        System.out.println("1 or more streams failed");
+                    }
                 }else if (words[0].equalsIgnoreCase("UPLOAD")){
-                    FileOutputStream fos;
+
                     BufferedOutputStream bos;
 
                     try {
+                        out = new PrintWriter(socket.getOutputStream(), true);
+
                         File currentFile = new File(currentDir.getPath(), words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
-                        fos = new FileOutputStream(currentFile);
-                        bos = new BufferedOutputStream(fos);
+                        bos = new BufferedOutputStream(new FileOutputStream(currentFile));
 
                         byte[] byteArr = new byte[fileLength];
                         int i = 0;
@@ -57,13 +111,10 @@ public class ServerThread extends Thread {
                         }
 
                         bos.write(byteArr);
-
                         bos.flush();
-                        fos.flush();
 
                         in.close();
                         out.close();
-                        fos.close();
                         bos.close();
 
                         // updating folder which currently has all shared files
@@ -75,7 +126,8 @@ public class ServerThread extends Thread {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
+
+                } 
 
             } catch (IOException e) {
                 e.printStackTrace();
