@@ -129,6 +129,7 @@ public class Client extends Application {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
             }
         });
         uploadBtn.setOnAction(new EventHandler<javafx.event.ActionEvent>(){

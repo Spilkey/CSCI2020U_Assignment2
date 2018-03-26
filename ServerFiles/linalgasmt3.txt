@@ -1,4 +1,4 @@
-Row reduction for question 1
+cd ARow reduction for question 1
 
 A =
 
