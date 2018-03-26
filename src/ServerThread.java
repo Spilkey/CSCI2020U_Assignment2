@@ -25,21 +25,70 @@ public class ServerThread extends Thread {
         public void run() {
             // initialize interaction
             try {
+                in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 String line = in.readLine();
                 String[] words = line.split(",");
                 if (words[0].equalsIgnoreCase("DIR")) {
+                    try {
+                        out = new PrintWriter(socket.getOutputStream(), true);
+
+                    } catch (IOException e) {
+                        System.err.println("IOException while opening a read/write connection");
+                    }
 
                     for (File f : currentFolder) {
                         out.println(f.getName());
                     }
                     out.close();
                     in.close();
+                }else if( words[0].equalsIgnoreCase("DOWNLOAD")){
+                    // Initialize streams
+                    DataOutputStream dos;
+                    FileInputStream fis;
+                    BufferedInputStream bis;
 
-                } else if (words[0].equalsIgnoreCase("DOWNLOAD")) {
-                    // TODO no idea what to put in here.
-                } else if (words[0].equalsIgnoreCase("UPLOAD")) {
-                    BufferedOutputStream bos;
+                    // Sending the File length to the server
                     try {
+                        dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+
+                        File reqFile = new File(currentDir+"\\"+words[1]);
+                        dos.writeBytes(String.valueOf(reqFile.length())+'\n');
+
+                        // Reading in the file and writing the file
+                        byte[] byteArr  = new byte [(int)reqFile.length()];
+                        fis = new FileInputStream(reqFile);
+                        bis = new BufferedInputStream(fis);
+                        int bytesread = bis.read(byteArr,0,byteArr.length);
+
+                        System.out.println("Reading " + reqFile + "(" + byteArr.length + " bytes)");
+                        System.out.println("Read "+ bytesread);
+                        DataInputStream ins = new DataInputStream(new FileInputStream(reqFile));
+                        int count;
+                        while ((count = ins.read(byteArr)) > 0) {
+                            System.out.println(count);
+                            dos.write(byteArr , 0, count);
+                            System.out.println("writing");
+                        }
+
+                        dos.flush();
+                        dos.close();
+                        bis.close();
+                        fis.close();
+                        ins.close();
+                        in.close();
+                        socket.close();
+
+                    } catch(IOException e) {
+                        e.printStackTrace();
+                        System.out.println("1 or more streams failed");
+                    }
+                }else if (words[0].equalsIgnoreCase("UPLOAD")){
+
+                    BufferedOutputStream bos;
+
+                    try {
+                        out = new PrintWriter(socket.getOutputStream(), true);
+
                         File currentFile = new File(currentDir.getPath(), words[1]);
                         int fileLength = Integer.parseInt(in.readLine());
 
@@ -69,6 +118,7 @@ public class ServerThread extends Thread {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
                 }
 
             } catch (IOException e) {

@@ -16,6 +16,7 @@ public class Client extends Application {
     private Socket socket = null;
     private PrintWriter networkOut = null;
     private BufferedReader networkIn = null;
+    private DataInputStream in = null;
 
     private static String[] arguments; // Global args variable to use in overridden main
     private File clientDir;
@@ -63,6 +64,7 @@ public class Client extends Application {
                 }
                 //Socket setup
                 //I/O setup
+
                 try {
                     socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
                 } catch (UnknownHostException e) {
@@ -75,40 +77,48 @@ public class Client extends Application {
                 }
                 try {
                     networkOut = new PrintWriter(socket.getOutputStream(), true);
-                    networkIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                } catch (IOException e) {
-                    System.err.println("IOException while opening a read/write connection");
+                    in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+                }catch(IOException e){
+                    e.printStackTrace();
                 }
-
-                try {
+                try{
                     networkOut.println("DOWNLOAD," + sendFile);
+                    String x = in.readLine();
+                    System.out.println(x);
+                    int fileLength = Integer.parseInt(x);
+
+                    //geting making file for new file
+                    File newFile = new File(System.getProperty("user.dir") + "\\" +
+                            clientDir.getName() + "\\" + sendFile);
 
                     // Initializing separate streams for file reading/writing
-                    DataInputStream dis = new DataInputStream(socket.getInputStream());
-                    BufferedReader br = new BufferedReader(new InputStreamReader(dis));
 
-                    File newFile = new File(System.getProperty("user.dir") + "\\" +
-                            serverDir.getName() + "\\" + sendFile);
-                    int sizeOfNewFile = Integer.parseInt(networkIn.readLine());
+                    BufferedOutputStream bos;
 
-                    FileWriter fileOutput = new FileWriter(newFile.getAbsoluteFile());
-                    BufferedWriter outFile = new BufferedWriter(fileOutput);
+                    bos = new BufferedOutputStream(new FileOutputStream(newFile));
 
-                    // Reading in the file and writing the file
-                    byte[] byteArr  = new byte [(int)newFile.length()];
+                    byte[] byteArr = new byte[fileLength];
+                    int i = 0;
+                    System.out.println("In availible "+ in.available());
+                    while(in.available() != 0 && i < fileLength) {
+                        byteArr[i] = in.readByte();
+                        i++;
+                        System.out.println("reading");
+                    }
 
-                    //TODO :: Using the streams somehow here?
+                    bos.write(byteArr);
 
-                    // Reading output from the server to add to the ListView
-                    server.getItems().add(newFile.getName());
+                    bos.flush();
 
-                    networkIn.close();
-                    networkOut.close();
+                    // updating folder which currently has all shared files
+                    client.getItems().add(newFile.getName());
 
-                    dis.close();
-                    br.close();
-                    outFile.flush();
-                    outFile.close();
+                    // sending folder names of files back to client for display
+                    System.out.println("current file is " + newFile);
+
+                    // Sending the File length to client
+                    in.close();
+                    bos.close();
                     socket.close();
 
                 } catch (IOException e) {
@@ -127,10 +137,8 @@ public class Client extends Application {
                             +"\\"+clientDir.getName()+"\\"+client.getSelectionModel().getSelectedItem());
                 } catch(NullPointerException e) {
                     System.out.println("Please select an item for the table.");
-                    e.printStackTrace();
                     return;
                 }
-
 
                 // Socket, I/O Setup
                 try {
