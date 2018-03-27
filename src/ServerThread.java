@@ -8,7 +8,7 @@ public class ServerThread extends Thread {
         protected DataInputStream in = null;
 
         private File currentDir;
-        protected LinkedList<File> currentFolder = null;
+        //protected LinkedList<File> currentFolder = null;
 
         public ServerThread(Socket socket) {
             super();
@@ -36,10 +36,15 @@ public class ServerThread extends Thread {
                     } catch (IOException e) {
                         System.err.println("IOException while opening a read/write connection");
                     }
-
-                    for (File f : currentFolder) {
-                        out.println(f.getName());
+                    currentDir = new File(in.readLine());
+                    try{
+                        for (File f : currentDir.listFiles()) {
+                            out.println(f.getName());
+                        }
+                    }catch(NullPointerException e){
+                        System.err.println("Directory is null");
                     }
+
                     out.close();
                     in.close();
                 }else if( words[0].equalsIgnoreCase("DOWNLOAD")){
@@ -51,9 +56,12 @@ public class ServerThread extends Thread {
                     // Sending the File length to the server
 
                     try {
+                        currentDir = new File(in.readLine());
+
                         dos = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
 
-                        File reqFile = new File(currentDir+"\\"+words[1]);
+                        File reqFile = new File(currentDir.getName()+"\\"+words[1]);
+
                         dos.writeBytes(String.valueOf(reqFile.length())+'\n');
 
 
@@ -65,13 +73,12 @@ public class ServerThread extends Thread {
 
 
                         System.out.println("Reading " + reqFile + "(" + byteArr.length + " bytes)");
-                        System.out.println("Read "+ bytesread);
                         DataInputStream ins = new DataInputStream(new FileInputStream(reqFile));
                         int count;
+
                         while ((count = ins.read(byteArr)) > 0) {
-                            System.out.println(count);
                             dos.write(byteArr , 0, count);
-                            System.out.println("writing");
+
                         }
 
                         dos.flush();
@@ -95,6 +102,8 @@ public class ServerThread extends Thread {
                     BufferedOutputStream bos;
 
                     try {
+                        currentDir = new File(in.readLine());
+
                         out = new PrintWriter(socket.getOutputStream(), true);
 
                         File currentFile = new File(currentDir.getPath(), words[1]);
@@ -118,10 +127,10 @@ public class ServerThread extends Thread {
                         bos.close();
 
                         // updating folder which currently has all shared files
-                        currentFolder.add(currentFile);
+
 
                         // sending folder names of files back to client for display
-                        System.out.println("current file is " + currentFile);
+                        System.out.println("Sending " + currentFile+" ("+byteArr.length+" bytes)");
 
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -140,9 +149,7 @@ public class ServerThread extends Thread {
             }
         }
 
-    public LinkedList<File> getCurrentFolder() { return currentFolder; }
 
-    public void setCurrentFolder(LinkedList<File> currentFolder) { this.currentFolder = currentFolder; }
 
     public void setCurrentDir(File currentDir) { this.currentDir = currentDir; }
 }

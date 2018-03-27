@@ -20,7 +20,7 @@ public class Client extends Application {
 
     private static String[] arguments; // Global args variable to use in overridden main
     private File clientDir;
-    private File serverDir;
+    private String serverDir;
 
     // holds the files
     private BorderPane layout = new BorderPane();
@@ -42,7 +42,7 @@ public class Client extends Application {
         }
 
         clientDir = new File(arguments[0]); // ClientFiles folder
-        serverDir = new File(arguments[1]); // ServerFiles folder
+        serverDir = arguments[1]; // ServerFiles folder
 
         addClientFiles();
         primaryStage.setTitle("File Sharer v1.0!");
@@ -64,7 +64,10 @@ public class Client extends Application {
                 }
                 //Socket setup
                 //I/O setup
-
+                if(sendFile == null){
+                    System.err.println("You must select a from the server list of files to download");
+                    return;
+                }
                 try {
                     socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
                 } catch (UnknownHostException e) {
@@ -84,8 +87,9 @@ public class Client extends Application {
                 try{
 
                     networkOut.println("DOWNLOAD," + sendFile);
+                    networkOut.println(serverDir);
                     String x = in.readLine();
-                    System.out.println(x);
+
                     int fileLength = Integer.parseInt(x);
 
                     //geting making file for new file
@@ -100,11 +104,11 @@ public class Client extends Application {
 
                     byte[] byteArr = new byte[fileLength];
                     int i = 0;
-                    System.out.println("In availible "+ in.available());
+
                     while(in.available() != 0 && i < fileLength) {
                         byteArr[i] = in.readByte();
                         i++;
-                        System.out.println("reading");
+
                     }
 
                     bos.write(byteArr);
@@ -113,10 +117,14 @@ public class Client extends Application {
 
 
                     // updating folder which currently has all shared files
-                    client.getItems().add(newFile.getName());
+                    if(!client.getItems().contains(newFile.getName())){
+                        client.getItems().add(newFile.getName());
+                    }
+
+
 
                     // sending folder names of files back to client for display
-                    System.out.println("current file is " + newFile);
+                    System.out.println("Downloading " + newFile + "(" +x + " bytes)");
 
 
                     // Sending the File length to client
@@ -145,6 +153,12 @@ public class Client extends Application {
                     return;
                 }
 
+                if(client.getSelectionModel().getSelectedItems().size() == 0){
+                    System.err.println("Please select an item from the client list");
+                    return;
+                }
+
+
 
                 // Socket, I/O Setup
                 try {
@@ -166,6 +180,7 @@ public class Client extends Application {
 
                 // Sending UPLOAD filename command to Server
                 networkOut.println("UPLOAD,"+ upFile.getName());
+                networkOut.println(serverDir);
 
                 // Initializing separate streams for file reading/writing
                 DataOutputStream dos;
@@ -193,7 +208,9 @@ public class Client extends Application {
                     dos.flush();
 
                     // Reading output from the server to add to the ListView
-                    server.getItems().add(upFile.getName());
+                    if(!server.getItems().contains(upFile.getName())) {
+                        server.getItems().add(upFile.getName());
+                    }
 
                     networkOut.close();
                     networkIn.close();
@@ -235,11 +252,11 @@ public class Client extends Application {
         } catch (IOException e) {
             System.err.println("IOException while opening a read/write connection");
         }
+
         networkOut.println("DIR");
+        networkOut.println(serverDir);
         String s = networkIn.readLine();
         while(s != null) {
-
-            System.out.println(s);
             server.getItems().add(s);
             s = networkIn.readLine();
         }
