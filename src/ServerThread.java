@@ -25,7 +25,6 @@ public class ServerThread extends Thread {
         public void run() {
             // initialize interaction
             try {
-
                 in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
                 String line = in.readLine();
                 String[] words = line.split(",");
@@ -48,13 +47,12 @@ public class ServerThread extends Thread {
                     out.close();
                     in.close();
                 }else if( words[0].equalsIgnoreCase("DOWNLOAD")){
-
+                    // Initialize streams
                     DataOutputStream dos;
                     FileInputStream fis;
                     BufferedInputStream bis;
 
                     // Sending the File length to the server
-
                     try {
                         currentDir = new File(in.readLine());
 
@@ -64,13 +62,11 @@ public class ServerThread extends Thread {
 
                         dos.writeBytes(String.valueOf(reqFile.length())+'\n');
 
-
                         // Reading in the file and writing the file
                         byte[] byteArr  = new byte [(int)reqFile.length()];
                         fis = new FileInputStream(reqFile);
                         bis = new BufferedInputStream(fis);
                         int bytesread = bis.read(byteArr,0,byteArr.length);
-
 
                         System.out.println("Reading " + reqFile + "(" + byteArr.length + " bytes)");
                         DataInputStream ins = new DataInputStream(new FileInputStream(reqFile));
@@ -82,15 +78,11 @@ public class ServerThread extends Thread {
                         }
 
                         dos.flush();
-
-                        // Reading output from the server to add to the ListView
-
                         dos.close();
                         bis.close();
                         fis.close();
                         ins.close();
                         in.close();
-
                         socket.close();
 
                     } catch(IOException e) {
@@ -136,7 +128,7 @@ public class ServerThread extends Thread {
                         e.printStackTrace();
                     }
 
-                } 
+                }
 
             } catch (IOException e) {
                 e.printStackTrace();

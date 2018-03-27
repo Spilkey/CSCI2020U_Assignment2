@@ -85,7 +85,6 @@ public class Client extends Application {
                     e.printStackTrace();
                 }
                 try{
-
                     networkOut.println("DOWNLOAD," + sendFile);
                     networkOut.println(serverDir);
                     String x = in.readLine();
@@ -115,7 +114,6 @@ public class Client extends Application {
 
                     bos.flush();
 
-
                     // updating folder which currently has all shared files
                     if(!client.getItems().contains(newFile.getName())){
                         client.getItems().add(newFile.getName());
@@ -126,10 +124,7 @@ public class Client extends Application {
                     // sending folder names of files back to client for display
                     System.out.println("Downloading " + newFile + "(" +x + " bytes)");
 
-
                     // Sending the File length to client
-
-
                     in.close();
                     bos.close();
                     socket.close();
